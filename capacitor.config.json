@@ -1,0 +1,16 @@
+{
+    "appId": "io.ionic.starter",
+    "appName": "med",
+    "webDir": "dist",
+    "bundledWebRuntime": false,
+    "plugins": {
+      "CapacitorSQLite": {
+        "webDir": "dist"
+      }
+    }
+    
+
+    
+  }
+
+  
