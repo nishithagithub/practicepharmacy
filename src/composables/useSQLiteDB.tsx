@@ -4,9 +4,8 @@ import {
   SQLiteConnection,
   CapacitorSQLite,
 } from "@capacitor-community/sqlite";
-import { cleanup } from "@testing-library/react";
 
-const useSQLiteDB = () => {
+const useSQLiteDB = (pharmacyname: string) => {
   const db = useRef<SQLiteDBConnection>();
   const sqlite = useRef<SQLiteConnection>();
   const [initialized, setInitialized] = useState<boolean>(false);
@@ -17,14 +16,14 @@ const useSQLiteDB = () => {
 
       sqlite.current = new SQLiteConnection(CapacitorSQLite);
       const ret = await sqlite.current.checkConnectionsConsistency();
-      const isConn = (await sqlite.current.isConnection("db_vite", false))
+      const isConn = (await sqlite.current.isConnection(pharmacyname, false))
         .result;
 
       if (ret.result && isConn) {
-        db.current = await sqlite.current.retrieveConnection("db_vite", false);
+        db.current = await sqlite.current.retrieveConnection(pharmacyname, false);
       } else {
         db.current = await sqlite.current.createConnection(
-          "db_vite",
+          pharmacyname,
           false,
           "no-encryption",
           1,
@@ -36,11 +35,8 @@ const useSQLiteDB = () => {
       setInitialized(true);
     };
 
-    initializeDB().then(()=>{
-      initializeTables();
-      setInitialized(true);
-    });
-  }, []);
+    initializeDB();
+  }, [pharmacyname]);
 
   const performSQLAction = async (
     action: (db: SQLiteDBConnection | undefined) => Promise<void>,
@@ -55,8 +51,7 @@ const useSQLiteDB = () => {
       if (errorCallback) errorCallback(error as Error);
     } finally {
       try {
-        (await db.current?.isDBOpen())?.result && (await db.current?.close());
-        cleanup&& (await cleanup());
+        await db.current?.close();
       } catch {}
     }
   };
@@ -64,7 +59,7 @@ const useSQLiteDB = () => {
   const initializeTables = async () => {
     performSQLAction(async (db: SQLiteDBConnection | undefined) => {
       const queryCreateMedicinesTable = `
-        CREATE TABLE IF NOT EXISTS medicines (
+        CREATE TABLE IF NOT EXISTS medicines_${pharmacyname} (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           name TEXT,
           type TEXT,
@@ -76,7 +71,7 @@ const useSQLiteDB = () => {
       `;
 
       const queryCreateGeneralItemsTable = `
-        CREATE TABLE IF NOT EXISTS general_items (
+        CREATE TABLE IF NOT EXISTS general_items_${pharmacyname} (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           name TEXT,
           quantity TEXT,

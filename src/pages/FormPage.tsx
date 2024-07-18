@@ -29,7 +29,7 @@ type MedicineItem = {
   price: number;
 };
 
-const Home: React.FC = () => {
+const FormPage: React.FC = () => {
   const [editItem, setEditItem] = useState<MedicineItem | undefined>();
   const [inputName, setInputName] = useState("");
   const [inputType, setInputType] = useState("");
@@ -37,7 +37,7 @@ const Home: React.FC = () => {
   const [inputExpiryDate, setInputExpiryDate] = useState("");
   const [inputBatchNo, setInputBatchNo] = useState("");
   const [inputPrice, setInputPrice] = useState<number | undefined>();
-  const [items, setItems] = useState<Array<MedicineItem>>();
+  const [items, setItems] = useState<Array<MedicineItem>>([]);
   const [toastMessage, setToastMessage] = useState("");
   const [showToast, setShowToast] = useState(false);
 
@@ -47,14 +47,16 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     if (initialized) {
+      console.log("DB initialized, loading data");
       loadData();
     }
   }, [initialized]);
 
   const loadData = async () => {
     try {
-      performSQLAction(async (db: SQLiteDBConnection | undefined) => {
+      await performSQLAction(async (db: SQLiteDBConnection | undefined) => {
         const respSelect = await db?.query(`SELECT * FROM medicines_${pharmacyName}`);
+        console.log("Data loaded", respSelect?.values);
         setItems(respSelect?.values || []);
       });
     } catch (error) {
@@ -101,7 +103,7 @@ const Home: React.FC = () => {
   };
 
   const addItem = async () => {
-    performSQLAction(
+    await performSQLAction(
       async (db: SQLiteDBConnection | undefined) => {
         await db?.query(
           `INSERT INTO medicines_${pharmacyName} (name, type, quantity, expiry_date, batch_no, price) VALUES (?,?,?,?,?,?);`,
@@ -133,7 +135,7 @@ const Home: React.FC = () => {
 
   const deleteItem = async (itemId: number) => {
     try {
-      performSQLAction(
+      await performSQLAction(
         async (db: SQLiteDBConnection | undefined) => {
           await db?.query(`DELETE FROM medicines_${pharmacyName} WHERE id=?;`, [itemId]);
 
@@ -292,4 +294,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home;
+export default FormPage;
