@@ -55,7 +55,7 @@ const Home: React.FC = () => {
     try {
       performSQLAction(async (db: SQLiteDBConnection | undefined) => {
         const respSelect = await db?.query(`SELECT * FROM medicines_${pharmacyName}`);
-        setItems(respSelect?.values || []);
+        setItems(respSelect?.values);
       });
     } catch (error) {
       alert((error as Error).message);
@@ -81,7 +81,7 @@ const Home: React.FC = () => {
           );
 
           const respSelect = await db?.query(`SELECT * FROM medicines_${pharmacyName};`);
-          setItems(respSelect?.values || []);
+          setItems(respSelect?.values);
         },
         () => {
           // On Success
@@ -109,7 +109,7 @@ const Home: React.FC = () => {
         );
 
         const respSelect = await db?.query(`SELECT * FROM medicines_${pharmacyName};`);
-        setItems(respSelect?.values || []);
+        setItems(respSelect?.values);
       },
       () => {
         // On Success
@@ -138,7 +138,7 @@ const Home: React.FC = () => {
           await db?.query(`DELETE FROM medicines_${pharmacyName} WHERE id=?;`, [itemId]);
 
           const respSelect = await db?.query(`SELECT * FROM medicines_${pharmacyName};`);
-          setItems(respSelect?.values || []);
+          setItems(respSelect?.values);
         },
         () => {
           // On Success
@@ -187,97 +187,93 @@ const Home: React.FC = () => {
           <IonTitle>REACT SQLITE</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent fullscreen className="ion-padding">
-        <div className="form-container">
-          <IonItem>
-            <IonLabel>Name</IonLabel>
-            <IonInput
-              type="text"
-              value={inputName}
-              onIonInput={(e) => setInputName(e.detail.value!)}
-            />
-          </IonItem>
-          <IonItem>
-            <IonLabel>Type</IonLabel>
-            <IonSelect
-              value={inputType}
-              placeholder="Select One"
-              onIonChange={(e) => setInputType(e.detail.value)}
-            >
-              <IonSelectOption value="strip">Strip</IonSelectOption>
-              <IonSelectOption value="tube">Tube</IonSelectOption>
-              <IonSelectOption value="powder">Powder</IonSelectOption>
-              <IonSelectOption value="liquid">Liquid</IonSelectOption>
-            </IonSelect>
-          </IonItem>
-          <IonItem>
-            <IonLabel>Quantity</IonLabel>
-            <IonInput
-              type="text"
-              value={inputQuantity}
-              onIonInput={(e) => setInputQuantity(e.detail.value!)}
-            />
-          </IonItem>
-          <IonItem>
-            <IonLabel>Expiry Date</IonLabel>
-            <IonInput
-              type="date"
-              value={inputExpiryDate}
-              onIonInput={(e) => setInputExpiryDate(e.detail.value!)}
-            />
-          </IonItem>
-          <IonItem>
-            <IonLabel>Batch No</IonLabel>
-            <IonInput
-              type="text"
-              value={inputBatchNo}
-              onIonInput={(e) => setInputBatchNo(e.detail.value!)}
-            />
-          </IonItem>
-          <IonItem>
-            <IonLabel>Price (Rs.)</IonLabel>
-            <IonInput
-              type="number"
-              value={inputPrice}
-              onIonInput={(e) => setInputPrice(Number(e.detail.value))}
-            />
-          </IonItem>
-          {editItem ? (
-            <>
-              <IonButton onClick={() => doEditItem(undefined)}>CANCEL</IonButton>
-              <IonButton onClick={updateItem}>UPDATE</IonButton>
-            </>
-          ) : (
-            <IonButton
-              onClick={addItem}
-              disabled={
-                !inputName ||
-                !inputType ||
-                !inputQuantity ||
-                !inputExpiryDate ||
-                !inputBatchNo ||
-                inputPrice === undefined
-              }
-            >
-              ADD
-            </IonButton>
-          )}
-        </div>
+    
+        <IonItem>
+          <IonLabel>Name</IonLabel>
+          <IonInput
+            type="text"
+            value={inputName}
+            onIonInput={(e) => setInputName(e.detail.value!)}
+          />
+        </IonItem>
+        <IonItem>
+          <IonLabel>Type</IonLabel>
+          <IonSelect
+            value={inputType}
+            placeholder="Select One"
+            onIonChange={(e) => setInputType(e.detail.value)}
+          >
+            <IonSelectOption value="strip">Strip</IonSelectOption>
+            <IonSelectOption value="tube">Tube</IonSelectOption>
+            <IonSelectOption value="powder">Powder</IonSelectOption>
+            <IonSelectOption value="liquid">Liquid</IonSelectOption>
+          </IonSelect>
+        </IonItem>
+        <IonItem>
+          <IonLabel>Quantity</IonLabel>
+          <IonInput
+            type="text"
+            value={inputQuantity}
+            onIonInput={(e) => setInputQuantity(e.detail.value!)}
+          />
+        </IonItem>
+        <IonItem>
+          <IonLabel>Expiry Date</IonLabel>
+          <IonInput
+            type="date"
+            value={inputExpiryDate}
+            onIonInput={(e) => setInputExpiryDate(e.detail.value!)}
+          />
+        </IonItem>
+        <IonItem>
+          <IonLabel>Batch No</IonLabel>
+          <IonInput
+            type="text"
+            value={inputBatchNo}
+            onIonInput={(e) => setInputBatchNo(e.detail.value!)}
+          />
+        </IonItem>
+        <IonItem>
+          <IonLabel>Price (Rs.)</IonLabel>
+          <IonInput
+            type="number"
+            value={inputPrice}
+            onIonInput={(e) => setInputPrice(Number(e.detail.value))}
+          />
+        </IonItem>
+        {editItem ? (
+          <>
+            <IonButton onClick={() => doEditItem(undefined)}>CANCEL</IonButton>
+            <IonButton onClick={updateItem}>UPDATE</IonButton>
+          </>
+        ) : (
+          <IonButton
+            onClick={addItem}
+            disabled={
+              !inputName ||
+              !inputType ||
+              !inputQuantity ||
+              !inputExpiryDate ||
+              !inputBatchNo ||
+              inputPrice === undefined
+            }
+          >
+            ADD
+          </IonButton>
+        )}
 
         <h3>THE SQLITE DATA</h3>
 
-        <div className="item-list">
-          {items?.map((item) => (
-            <IonItem key={item.id}>
-              <IonLabel className="ion-text-wrap">
-                {item.name} - {item.type} - {item.quantity} - {item.expiry_date} -{" "}
-                {item.batch_no} - {item.price}
-              </IonLabel>
-              <IonButton onClick={() => doEditItem(item)}>EDIT</IonButton>
-              <IonButton onClick={() => confirmDelete(item.id)}>DELETE</IonButton>
-            </IonItem>
-          ))}
-        </div>
+        {items?.map((item) => (
+          <IonItem key={item.id}>
+            <IonLabel className="ion-text-wrap">
+              {item.name} - {item.type} - {item.quantity} - {item.expiry_date} -{" "}
+              {item.batch_no} - {item.price}
+            </IonLabel>
+            <IonButton onClick={() => doEditItem(item)}>EDIT</IonButton>
+            <IonButton onClick={() => confirmDelete(item.id)}>DELETE</IonButton>
+          </IonItem>
+        ))}
 
         {ConfirmationAlert}
 
@@ -287,7 +283,7 @@ const Home: React.FC = () => {
           message={toastMessage}
           duration={2000}
         />
-      </IonContent>
+     
     </IonPage>
   );
 };

@@ -1,30 +1,19 @@
-.form-container {
-    padding: 16px;
-    background: #fff;
-    margin-bottom: 16px;
-    border-radius: 8px;
-  }
-  
-  .item-list {
-    margin-top: 16px;
-  }
-  
-  .ion-page {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .ion-content {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-  
-  .ion-text-wrap {
-    white-space: normal;
-  }
-  
-  h3 {
-    text-align: center;
-  }
-  
+html, body, ion-app, ion-content {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+ion-content {
+  --padding-start: 16px;
+  --padding-end: 16px;
+}
+
+ion-item {
+  margin-bottom: 16px;
+}
+
+ion-button {
+  margin-top: 16px;
+}
